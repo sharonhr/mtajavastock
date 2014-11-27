@@ -24,18 +24,17 @@ public class Sharon1Servlet extends HttpServlet {
 		//part1
 		double result2;
 		double radius;
+		int pow = 2;
 		radius = 50;
-		result2 = Math.pow(radius, 2) * Math.PI;
+		result2 = Math.pow(radius, pow) * Math.PI;
 		String result2Str = new String("Area of circle with radius " + radius + " is " + result2 + " square CM");
 		
 		//part2
-		double oppositeLength;
 		double angleB= 30;
-		double angleBToRadians;
+		double angleBToRadians = Math.toRadians(angleB);
 		int hypotenuse= 50;
-		angleBToRadians= Math.toRadians(angleB);
-		oppositeLength= Math.sin(angleBToRadians)*hypotenuse;
-		String result3Str= new String("Length of opposite where angle B is " + angleB + " degrees and Hypotenuse length is " + hypotenuse +" cm is: "+oppositeLength+" cm");
+		double oppositeLength = Math.sin(angleBToRadians)*hypotenuse;
+		String result3Str = new String("Length of opposite where angle B is " + angleB + " degrees and Hypotenuse length is " + hypotenuse +" cm is: "+oppositeLength+" cm");
 		
 		//part3
 		int base=20;

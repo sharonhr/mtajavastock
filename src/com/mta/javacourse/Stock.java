@@ -1,17 +1,12 @@
 package com.mta.javacourse;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Date;
 public class Stock {
 
 	private String symbol;
 	private float ask;
 	private float bid;
-	private java.util.Date Date;
-	//Calendar c = Calendar.getInstance();
-	
-	
+	private Date date;
 	
 	// Getters
 	public String getSymbol() {
@@ -26,8 +21,8 @@ public class Stock {
 		return bid;
 	}
 
-	public java.util.Date getDate() {
-		return Date;
+	public Date getDate() {
+		return date;
 	}
 
 	// Setters
@@ -43,16 +38,12 @@ public class Stock {
 		bid = num2;
 	}
 
-	public void setDate(java.util.Date date) {
-		Date = date;
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
-	/*public void setC(Calendar c) {
-		this.c = c;
-	}*/
-	
 	public String getHtmlDescription() {
-		String stocksDetails = new String ("<b>symbol</b>: " + getSymbol() +  "<b> ask = </b>:" + getAsk() + "<b> bid </b>: " + getBid()  + " <b> date </b>: " + getDate());
+		String stocksDetails = new String ("<b>symbol</b>: " + getSymbol() +  "<b> ask: </b>" + getAsk() + "<b> bid: </b> " + getBid()  + " <b> date: </b> " + getDate());
 		return stocksDetails;
 	}
 
