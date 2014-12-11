@@ -1,13 +1,54 @@
-package com.mta.javacourse;
+package com.mta.javacourse.model;
 
 import java.util.Date;
+
+/**
+ * Stock - sets stock fields
+ * @author sharon
+ *
+ */
+
 public class Stock {
 
 	private String symbol;
 	private float ask;
 	private float bid;
 	private Date date;
+
+	/**
+	 * initializing members
+	 */
 	
+	public Stock(){
+		symbol = "";
+		bid=0;
+		date = new Date();
+	}
+	/**
+	 * insert values to members
+	 * @param symbol
+	 * @param ask
+	 * @param bid
+	 * @param date
+	 */
+	public Stock (String symbol, float ask, float bid, Date date)
+	{
+		this();
+		setSymbol(symbol);
+		setAsk(ask);
+		setBid(bid);
+		setDate(date);
+	}
+
+	/**
+	 * copy constructor for stock
+	 * @param stock
+	 */
+	public Stock (Stock stock)
+	{
+		this (stock.getSymbol(), stock.getAsk(), stock.getBid(), stock.getDate());
+	}
+
 	// Getters
 	public String getSymbol() {
 		return symbol;
@@ -48,5 +89,5 @@ public class Stock {
 	}
 
 
-	
+
 }

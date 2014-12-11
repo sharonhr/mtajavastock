@@ -1,56 +1,42 @@
 package com.mta.javacourse.service;
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.mta.javacourse.Stock;
+import com.mta.javacourse.model.Stock;
 import com.mta.javacourse.model.portfolio;
 
-public class PortfolioService  {
-    
+/**
+ * class that adds values into stock members
+ * @author sharon
+ *
+ */
 
+public class PortfolioService  {
+
+	/**
+	 * this function creates a portfolio
+	 * @return
+	 */
+	
 	public portfolio getPortfolio(){
-		
+		portfolio myPortfolio = new portfolio();
+
 		Calendar cal = Calendar.getInstance();
 		cal.set (2014, 10, 15, 0, 0, 0);
 		Date date = cal.getTime();
-		
-		
-		portfolio myPortfolio = new portfolio();
-		Stock myFirstStock = new Stock();
-		Stock mySecondStock = new Stock();
-		Stock myThirdStock = new Stock();
-		
-		
-		myFirstStock.setSymbol("PIH");
-		mySecondStock.setSymbol("AAL");
-		myThirdStock.setSymbol("CAAS");
-		
-		myFirstStock.setAsk((float) 12.4);
-		mySecondStock.setAsk((float) 5.5);
-		myThirdStock.setAsk((float) 31.5);
-		
-		myFirstStock.setBid((float) 13.1);
-		mySecondStock.setBid((float) 5.78);
-		myThirdStock.setBid((float) 31.2);
-		
 
-		myFirstStock.setDate(date);
-		mySecondStock.setDate(date);
-		myThirdStock.setDate(date);
-		
+		Stock myFirstStock = new Stock("PIH", 12.4f, 13.1f, date);
+		Stock mySecondStock = new Stock("AAL", 5.5f, 5.78f, date);
+		Stock myThirdStock = new Stock("CAAS", 31.5f, 31.2f, date);
+
 		myPortfolio.addStock(myFirstStock);
 		myPortfolio.addStock(mySecondStock);
 		myPortfolio.addStock(myThirdStock);
-		
+
 		return myPortfolio;
+
 	}
 }
 
-		
-		
+
+
