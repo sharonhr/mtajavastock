@@ -21,18 +21,29 @@ public class PortfolioService  {
 	public portfolio getPortfolio(){
 		portfolio myPortfolio = new portfolio();
 
+		myPortfolio.setTitle("<b>Exercise 07 - Portfolio</b>");
+		myPortfolio.setBalance(10000);
+		
 		Calendar cal = Calendar.getInstance();
-		cal.set (2014, 10, 15, 0, 0, 0);
+		cal.set (2014, 11, 15, 0, 0, 0);
 		Date date = cal.getTime();
 
-		Stock myFirstStock = new Stock("PIH", 12.4f, 13.1f, date);
-		Stock mySecondStock = new Stock("AAL", 5.5f, 5.78f, date);
-		Stock myThirdStock = new Stock("CAAS", 31.5f, 31.2f, date);
+		Stock myFirstStock = new Stock("PIH", 10f, 8.5f, date);
+		Stock mySecondStock = new Stock("AAL", 30f, 25.5f, date);
+		Stock myThirdStock = new Stock("CAAS", 20f, 15.5f, date);
 
 		myPortfolio.addStock(myFirstStock);
 		myPortfolio.addStock(mySecondStock);
 		myPortfolio.addStock(myThirdStock);
-
+	
+		myPortfolio.buyStock("PIH",20);
+		myPortfolio.buyStock("AAL",30);
+		myPortfolio.buyStock("CAAS",40);
+		
+		myPortfolio.sellStock("AAL", -1);
+		myPortfolio.removeStock("CAAS");
+		
+		
 		return myPortfolio;
 
 	}

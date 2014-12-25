@@ -40,6 +40,7 @@ public class Stock {
 		setDate(date);
 	}
 
+
 	/**
 	 * copy constructor for stock
 	 * @param stock
@@ -82,7 +83,8 @@ public class Stock {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-
+	
+	
 	public String getHtmlDescription() {
 		String stocksDetails = new String ("<b>symbol</b>: " + getSymbol() +  "<b> ask: </b>" + getAsk() + "<b> bid: </b> " + getBid()  + " <b> date: </b> " + getDate());
 		return stocksDetails;
