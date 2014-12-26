@@ -16,16 +16,16 @@ public class Stock {
 	private Date date;
 
 	/**
-	 * initializing members
+	 * constructor (initializing members)
 	 */
-	
+
 	public Stock(){
 		symbol = "";
 		bid=0;
 		date = new Date();
 	}
 	/**
-	 * insert values to members
+	 * Stocks copy constructor 
 	 * @param symbol
 	 * @param ask
 	 * @param bid
@@ -41,10 +41,6 @@ public class Stock {
 	}
 
 
-	/**
-	 * copy constructor for stock
-	 * @param stock
-	 */
 	public Stock (Stock stock)
 	{
 		this (stock.getSymbol(), stock.getAsk(), stock.getBid(), stock.getDate());
@@ -83,8 +79,8 @@ public class Stock {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	
-	
+
+
 	public String getHtmlDescription() {
 		String stocksDetails = new String ("<b>symbol</b>: " + getSymbol() +  "<b> ask: </b>" + getAsk() + "<b> bid: </b> " + getBid()  + " <b> date: </b> " + getDate());
 		return stocksDetails;

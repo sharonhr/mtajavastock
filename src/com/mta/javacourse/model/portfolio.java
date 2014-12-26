@@ -34,7 +34,7 @@ public class portfolio {
 	}
 
 	/**
-	 * Constructor that sets a title
+	 * sets the title
 	 * @param title
 	 */
 
@@ -45,7 +45,7 @@ public class portfolio {
 	}
 
 	/**
-	 * copy portfolio objects
+	 * copy constructor
 	 * @param portfolio
 	 */
 
@@ -62,8 +62,8 @@ public class portfolio {
 	}
 
 	/**
-	 * function that update the balance according to the relevant actions 
-	 * @param amount have the specific sum of money
+	 * function that updates balance according to the relevant actions 
+	 * @param amount - sum of money
 	 * @return
 	 */
 
@@ -74,7 +74,7 @@ public class portfolio {
 	}
 
 	/**
-	 * adds a new stock to portfolio
+	 * adds a new stock to portfolio and adjust the array accordingly
 	 * @param addingStock
 	 */
 
@@ -113,8 +113,8 @@ public class portfolio {
 		}
 		return false;
 	}
-	
-	/* * Sells stock and update the balance accordingly 
+
+	/** Sells stock and update the balance accordingly 
 	 * @param symbol
 	 * @param quantity
 	 * @return
@@ -149,190 +149,195 @@ public class portfolio {
 		}
 		return false;
 	}
-	
-		/**
-		 * Buy stocks and update the balance
-		 * @param symbol
-		 * @param quantity
-		 * @return
-		 */
 
-		public boolean buyStock(String symbol, int quantity )
-		{
-			for(int i=0; i<stocks.length;i++)
-				if(symbol.equals(stocks[i].getSymbol()))
-				{
-					if( quantity == -1) {
-						stocksStatus[i].setStockQuantity(stocksStatus[i].getStockQuantity()+ (int)(balance/stocksStatus[i].getCurrentAsk()));
-						float amountOfMoney = ((int)(balance/stocksStatus[i].getCurrentAsk()) *stocksStatus[i].getCurrentAsk())/(-1); 
-						updateBalance(amountOfMoney);
+	/**
+	 * Buy stock/s and update the balance
+	 * @param symbol
+	 * @param quantity
+	 * @return
+	 */
 
-					}
-					else{
-						stocksStatus[i].setStockQuantity(stocksStatus[i].getStockQuantity()+quantity);
-						float amountOfMoney=(quantity*stocksStatus[i].getCurrentAsk())/(-1);
-						updateBalance(amountOfMoney);
-					}
-					return true;
+	public boolean buyStock(String symbol, int quantity )
+	{
+		for(int i=0; i<portfolioSize;i++)
+			if(symbol.equals(stocks[i].getSymbol()))
+			{
+				if( quantity == -1) {
+					int canBuy = (int) (balance/stocksStatus[i].getCurrentAsk());
+					stocksStatus[i].setStockQuantity(stocksStatus[i].getStockQuantity()+ canBuy);
+					float amountOfMoney = ((canBuy) *stocksStatus[i].getCurrentAsk())/(-1); 
+					updateBalance(amountOfMoney);
+
 				}
-			return false;
-		}
-
-
-		/**
-		 * Calculates value of balance
-		 * @return
-		 */
-		public float getBalance() {
-			return balance;
-		}
-
-		/**
-		 * returns the total value of all stocks
-		 * @return
-		 */
-
-		public float getStocksValue() {
-			float totalStocksValue = 0;
-
-			for (int i = 0; i < portfolioSize; i++) {
-				totalStocksValue += stocksStatus[i].getStockQuantity() * stocksStatus[i].getCurrentBid();
+				else{
+					stocksStatus[i].setStockQuantity(stocksStatus[i].getStockQuantity()+quantity);
+					float amountOfMoney=(quantity*stocksStatus[i].getCurrentAsk())/(-1);
+					updateBalance(amountOfMoney);
+				}
+				return true;
 			}
-			return totalStocksValue;
-		}
-
-		/**
-		 * The sum of all stocks value and portfoios balance
-		 * @returns Total value
-		 */
-		public float getTotalValue() {
-			return getBalance() + getStocksValue();
-		}
-
-		public Stock[] getStocks()
-		{
-			return stocks;
-		}
-
-		public StockStatus[] getStocksStatus() {
-			return stocksStatus;
-		}
-		
-		public void setBalance(float balance) {
-			this.balance = balance;
-		}
-
-		public void setStocksStatus(StockStatus[] stocksStatus) {
-			this.stocksStatus = stocksStatus;
-		}
-
-		public String getTitle() {
-			return title;
-		}
-
-		public void setTitle(String title) {
-			this.title = title;
-		}
-
-		public int getPortfolioSize() {
-			return portfolioSize;
-		}
-
-		public void setPortfolioSize(int portfolioSize) {
-			this.portfolioSize = portfolioSize;
-		}
-
-
-		public String getHtmlString()
-		{
-			String resString = "<h1>" + title + "<h1>"+ "<br>"+"<br>"+ "The total value of all stocks: "+ getStocksValue() + " $" + "<br>" + "The sum of all stocks value and portfoios balance: " + getTotalValue() + "$"+"<br>"+" The value of balance: "+ getBalance()+ "$" +"<br>" ;
-			getBalance();
-			getTotalValue();
-
-			for(int i=0; i<portfolioSize ; i++)
-			{
-				resString+= stocks[i].getHtmlDescription() + "<br>";
-			}
-			return resString;
-		}
-
-		/**
-		 * inner class - contains stock status
-		 * @author sharon
-		 *
-		 */
-
-		public class StockStatus{
-
-
-			private String symbol;
-			private float currentBid, currentAsk;
-			private Date date;
-			private ALGO_RECOMMENDATION recommendation;
-			int stockQuantity;
-
-			/**
-			 * Initializing all needed variables 
-			 */
-
-			public	StockStatus(String newSymbol, float newCurrentAsk, float newCurrentBid, Date newDate, ALGO_RECOMMENDATION newRecommendation, int newStockQuantity)
-			{
-				symbol = newSymbol;
-				currentAsk = newCurrentAsk;
-				currentBid = newCurrentBid;
-				date = newDate;
-				ALGO_RECOMMENDATION recommendation=newRecommendation;
-				stockQuantity = newStockQuantity;
-			}
-
-			/**
-			 * copy constructor for stock status
-			 * @param stockStatus
-			 */
-			public StockStatus (StockStatus stockStatus)
-			{
-				setSymbol(stockStatus.symbol);
-				setCurrentAsk(stockStatus.currentAsk);
-				setCurrentBid(stockStatus.currentBid);
-				setDate(stockStatus.date);
-				setStockQuantity(stockStatus.stockQuantity);
-			}
-
-
-			public String getSymbol() {
-				return symbol;
-			}
-			public void setSymbol(String symbol) {
-				this.symbol = symbol;
-			}
-			public float getCurrentBid() {
-				return currentBid;
-			}
-			public void setCurrentBid(float currentBid) {
-				this.currentBid = currentBid;
-			}
-			public float getCurrentAsk() {
-				return currentAsk;
-			}
-			public void setCurrentAsk(float currentAsk) {
-				this.currentAsk = currentAsk;
-			}
-			public Date getDate() {
-				return date;
-			}
-			public void setDate(Date date) {
-				this.date = date;
-			}
-			public int getStockQuantity() {
-				return stockQuantity;
-			}
-			public void setStockQuantity(int stockQuantity) {
-				this.stockQuantity = stockQuantity;
-			}
-
-
-
-		}		
-
+		return false;
 	}
+
+
+	/**
+	 * Calculates value of balance
+	 * @return
+	 */
+	public float getBalance() {
+		return balance;
+	}
+
+	/**
+	 * returns the total value of all stocks
+	 * @return
+	 */
+
+	public float getStocksValue() {
+		float totalStocksValue = 0;
+
+		for (int i = 0; i < portfolioSize; i++) {
+			totalStocksValue += stocksStatus[i].getStockQuantity() * stocksStatus[i].getCurrentBid();
+		}
+		return totalStocksValue;
+	}
+
+	/**
+	 * The sum of all stocks value and portfoios balance
+	 * @returns Total value
+	 */
+	public float getTotalValue() {
+		return getBalance() + getStocksValue();
+	}
+
+	//Setters
+	public void setBalance(float balance) {
+		this.balance = balance;
+	}
+
+	public void setStocksStatus(StockStatus[] stocksStatus) {
+		this.stocksStatus = stocksStatus;
+	}
+	
+	public void setPortfolioSize(int portfolioSize) {
+		this.portfolioSize = portfolioSize;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	// Getters
+	public int getPortfolioSize() {
+		return portfolioSize;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+	
+	public Stock[] getStocks()
+	{
+		return stocks;
+	}
+	
+	public StockStatus[] getStocksStatus() {
+		return stocksStatus;
+	}
+
+	/**
+	 * returns all relevant values that will be printed)
+	 * @return
+	 */
+	public String getHtmlString()
+	{
+		String resString = "<h1>" + title + "<h1>"+ "<br>"+"<br>"+ "Total value of stocks: "+ getStocksValue() + " $" + "<br>" + "Total Portfolio value: " + getTotalValue() + "$"+"<br>"+" Balance: "+ getBalance()+ "$" +"<br>" ;
+		getBalance();
+		getTotalValue();
+
+		for(int i=0; i<portfolioSize ; i++)
+		{
+			resString+= stocks[i].getHtmlDescription() + "<br>";
+		}
+		return resString;
+	}
+
+	/**
+	 * inner class - contains stock status
+	 * @author sharon
+	 *
+	 */
+
+	public class StockStatus{
+
+
+		private String symbol;
+		private float currentBid, currentAsk;
+		private Date date;
+		private ALGO_RECOMMENDATION recommendation;
+		int stockQuantity;
+
+		/**
+		 * Initializing all needed variables 
+		 */
+
+		public	StockStatus(String newSymbol, float newCurrentAsk, float newCurrentBid, Date newDate, ALGO_RECOMMENDATION newRecommendation, int newStockQuantity)
+		{
+			symbol = newSymbol;
+			currentAsk = newCurrentAsk;
+			currentBid = newCurrentBid;
+			date = newDate;
+			ALGO_RECOMMENDATION recommendation=newRecommendation;
+			stockQuantity = newStockQuantity;
+		}
+
+		/**
+		 * copy constructor for stock status
+		 * @param stockStatus
+		 */
+		public StockStatus (StockStatus stockStatus)
+		{
+			setSymbol(stockStatus.symbol);
+			setCurrentAsk(stockStatus.currentAsk);
+			setCurrentBid(stockStatus.currentBid);
+			setDate(stockStatus.date);
+			setStockQuantity(stockStatus.stockQuantity);
+		}
+
+
+		public String getSymbol() {
+			return symbol;
+		}
+		public void setSymbol(String symbol) {
+			this.symbol = symbol;
+		}
+		public float getCurrentBid() {
+			return currentBid;
+		}
+		public void setCurrentBid(float currentBid) {
+			this.currentBid = currentBid;
+		}
+		public float getCurrentAsk() {
+			return currentAsk;
+		}
+		public void setCurrentAsk(float currentAsk) {
+			this.currentAsk = currentAsk;
+		}
+		public Date getDate() {
+			return date;
+		}
+		public void setDate(Date date) {
+			this.date = date;
+		}
+		public int getStockQuantity() {
+			return stockQuantity;
+		}
+		public void setStockQuantity(int stockQuantity) {
+			this.stockQuantity = stockQuantity;
+		}
+
+
+
+	}		
+
+}
 

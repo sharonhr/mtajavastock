@@ -17,13 +17,13 @@ public class PortfolioService  {
 	 * this function creates a portfolio
 	 * @return
 	 */
-	
+
 	public portfolio getPortfolio(){
 		portfolio myPortfolio = new portfolio();
 
 		myPortfolio.setTitle("<b>Exercise 07 - Portfolio</b>");
 		myPortfolio.setBalance(10000);
-		
+
 		Calendar cal = Calendar.getInstance();
 		cal.set (2014, 11, 15, 0, 0, 0);
 		Date date = cal.getTime();
@@ -35,15 +35,15 @@ public class PortfolioService  {
 		myPortfolio.addStock(myFirstStock);
 		myPortfolio.addStock(mySecondStock);
 		myPortfolio.addStock(myThirdStock);
-	
+
 		myPortfolio.buyStock("PIH",20);
 		myPortfolio.buyStock("AAL",30);
 		myPortfolio.buyStock("CAAS",40);
-		
+
 		myPortfolio.sellStock("AAL", -1);
 		myPortfolio.removeStock("CAAS");
-		
-		
+
+
 		return myPortfolio;
 
 	}
