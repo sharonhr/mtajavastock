@@ -2,6 +2,8 @@ package com.mta.javacourse.service;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+
 import com.mta.javacourse.model.Stock;
 import com.mta.javacourse.model.portfolio;
 
@@ -24,9 +26,8 @@ public class PortfolioService  {
 		myPortfolio.setTitle("<b>Exercise 08 - Portfolio</b>");
 		myPortfolio.setBalance(10000);
 
-		Calendar cal = Calendar.getInstance();
-		cal.set (2014, 11, 15, 0, 0, 0);
-		Date date = cal.getTime();
+		Calendar cal = new GregorianCalendar(2014,11,15);
+		java.util.Date date = cal.getTime();	
 
 		Stock myFirstStock = new Stock("PIH", 10f, 8.5f, date);
 		Stock mySecondStock = new Stock("AAL", 30f, 25.5f, date);
@@ -48,6 +49,5 @@ public class PortfolioService  {
 
 	}
 }
-
 
 

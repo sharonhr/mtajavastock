@@ -26,7 +26,7 @@ public class portfolio {
 	 */
 
 	public portfolio(){ 
-		int portfolioSize=0;
+		portfolioSize=0;
 		setTitle ("");
 		balance=0;
 		stocksStatus = new StockStatus[MAX_PORTFOLIO_SIZE];
@@ -81,7 +81,14 @@ public class portfolio {
 
 		else if(portfolioSize<MAX_PORTFOLIO_SIZE)
 		{
-			stocksStatus[portfolioSize] = new StockStatus(addingStock.getSymbol(), addingStock.getAsk(), addingStock.getBid(), new Date(addingStock.getDate().getTime()), ALGO_RECOMMENDATION.DO_NOTHING, 0 );
+			StockStatus stockStatus = new StockStatus();
+			
+			stockStatus.setSymbol(addingStock.symbol);
+			stockStatus.setAsk(addingStock.ask);
+			stockStatus.setBid(addingStock.bid);
+			stockStatus.setRecommendation(ALGO_RECOMMENDATION.DO_NOTHING);
+			stockStatus.date=new Date(addingStock.getDate().getTime());
+			this.stocksStatus[portfolioSize]=stockStatus;
 			portfolioSize++;
 		}
 	}
@@ -235,6 +242,7 @@ public class portfolio {
 	 * returns all relevant values that will be printed)
 	 * @return
 	 */
+	
 	public String getHtmlString()
 	{
 		String resString = "<h1>" + title + "<h1>"+ "<br>"+"<br>"+ "Total value of stocks: "+ getStocksValue() + " $" + "<br>" + "Total Portfolio value: " + getTotalValue() + "$"+"<br>"+" Balance: "+ getBalance()+ "$" +"<br>" ;
@@ -247,86 +255,6 @@ public class portfolio {
 		}
 		return resString;
 	}
-
-	/**
-	 * inner class - contains stock status
-	 * @author sharon
-	 *
-	 */
-
-	/*public class StockStatus{
-
-
-		private String symbol;
-		private float currentBid, currentAsk;
-		private Date date;
-		private ALGO_RECOMMENDATION recommendation;
-		int stockQuantity;
-
-		/**
-		 * Initializing all needed variables 
-		 */
-
-	/*	public	StockStatus(String newSymbol, float newCurrentAsk, float newCurrentBid, Date newDate, ALGO_RECOMMENDATION newRecommendation, int newStockQuantity)
-		{
-			symbol = newSymbol;
-			currentAsk = newCurrentAsk;
-			currentBid = newCurrentBid;
-			date = newDate;
-			ALGO_RECOMMENDATION recommendation=newRecommendation;
-			stockQuantity = newStockQuantity;
-		}
-
-		/**
-		 * copy constructor for stock status
-		 * @param stockStatus
-		 */
-	/*
-		public StockStatus (StockStatus stockStatus)
-		{
-			setSymbol(stockStatus.symbol);
-			setCurrentAsk(stockStatus.currentAsk);
-			setCurrentBid(stockStatus.currentBid);
-			setDate(stockStatus.date);
-			setStockQuantity(stockStatus.stockQuantity);
-		}
-
-/*
-		public String getSymbol() {
-			return symbol;
-		}
-		public void setSymbol(String symbol) {
-			this.symbol = symbol;
-		}
-		public float getCurrentBid() {
-			return currentBid;
-		}
-		public void setCurrentBid(float currentBid) {
-			this.currentBid = currentBid;
-		}
-		public float getCurrentAsk() {
-			return currentAsk;
-		}
-		public void setCurrentAsk(float currentAsk) {
-			this.currentAsk = currentAsk;
-		}
-		public Date getDate() {
-			return date;
-		}
-		public void setDate(Date date) {
-			this.date = date;
-		}
-		public int getStockQuantity() {
-			return stockQuantity;
-		}
-		public void setStockQuantity(int stockQuantity) {
-			this.stockQuantity = stockQuantity;
-		}
-
-
-
-	}	
-*/
-
 }
+
 
