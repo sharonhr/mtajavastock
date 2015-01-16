@@ -34,7 +34,10 @@ public class PortfolioServlet extends HttpServlet {
 			resp.getWriter().println(portfolio.getHtmlString());
 			Stock[] stocksStatus = portfolio.getStocksStatus();
 			
-		}catch(PortfolioFullException e) {
+		} catch(Exception e) {
+			resp.getWriter().println(e.getMessage());
+		}
+			/*}catch(PortfolioFullException e) {
 			resp.getWriter().println("Portfolio is full!");
 		} catch(StockAlreadyExistsException e) {
 			resp.getWriter().println("The stock already exists!");
@@ -42,7 +45,7 @@ public class PortfolioServlet extends HttpServlet {
 		//	resp.getWriter().println("Not enough balance!");
 		} catch (StockNotExistException e) {
 			resp.getWriter().println("The stock does not exist!");
-		
+		*/
 	}	
 		/*PortfolioService portfolioService = new PortfolioService();
 		portfolio portfolio = portfolioService.getPortfolio();
@@ -52,5 +55,4 @@ public class PortfolioServlet extends HttpServlet {
 		resp.getWriter().println(portfolio.getHtmlString());*/
 
 	}
-}
 

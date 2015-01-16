@@ -1,4 +1,10 @@
 package exception;
+/**
+ * exception to be thrown when the portfolio balance becomes
+negative
+ * @author sharon
+ *
+ */
 
 public class BalanceException extends Exception {
 

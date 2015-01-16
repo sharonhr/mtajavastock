@@ -31,7 +31,7 @@ public class PortfolioService  {
 	public portfolio getPortfolio() throws StockAlreadyExistsException, PortfolioFullException, StockNotExistException{
 		portfolio myPortfolio = new portfolio();
 
-		myPortfolio.setTitle("<b>Exercise 08 - Portfolio</b>");
+		myPortfolio.setTitle("<b>Exercise 09 - Portfolio</b>");
 		myPortfolio.setBalance(10000);
 
 		Calendar cal = new GregorianCalendar(2014,11,15);
