@@ -1,63 +1,202 @@
 package com.mta.javacourse.service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-import com.mta.javacourse.model.Stock;
-import com.mta.javacourse.model.portfolio;
-
+import com.mta.javacourse.dto.PortfolioTotalStatus;
+import exception.BalanceException;
+import exception.IllegalQuantityException;
 import exception.PortfolioFullException;
 import exception.StockAlreadyExistsException;
-import exception.StockNotExistException;
-import exception.BalanceException;
+import exception.StockNotExistsException;
+import exception.SymbolNotFoundInNasdaq;
+import com.mta.javacourse.model.portfolio;
+import com.mta.javacourse.model.Stock;
+import  com.mta.javacourse.model.StockStatus;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
- * class that adds values into stock members
- * @author sharon
- *
+ * @author hanan.gitliz@gmail.com
  */
+public class PortfolioService {
+	
+	private final static Logger log = Logger.getLogger(PortfolioService.class.getSimpleName());
+	
+	private portfolio portfolio;
+	
+	public enum OPERATION {
+		ADD, REMOVE, SELL, BUY
+	}
+	
+	private static final int DAYS_BACK = 30;
+	private static PortfolioService instance = new PortfolioService();
 
-public class PortfolioService  {
+	public static PortfolioService getInstance() {
+		return instance;
+	}
+	
+	private DatastoreService datastoreService;
+	
+	public PortfolioService() {			//private to public
+		datastoreService = DatastoreService.getInstance();
+	}
 
+	public portfolio getPortfolio() throws BalanceException {
+		if(portfolio == null) {
+			portfolio = datastoreService.loadPortfolilo();
+		}
+		
+		return portfolio;
+	}
+	
 	/**
-	 * this function creates a portfolio
-	 * @return
-	 * @throws PortfolioFullException 
-	 * @throws StockAlreadyExistsException 
-	 * @throws StockNotExistException 
+	 * Updates Portfolio with algo recommendation.
+	 * @throws BalanceException 
 	 */
+	public void update() throws BalanceException {
+		StockStatus[] stocks = getPortfolio().getStocks();
+		List<String> symbols = new ArrayList<>(portfolio.MAX_PORTFOLIO_SIZE);
+		for (StockStatus stockStatus : stocks) {
+			symbols.add(stockStatus.getSymbol());
+		}
+		
+		List<StockStatus> update = new ArrayList<>(portfolio.MAX_PORTFOLIO_SIZE);
+		List<Stock> currentStocksList;
+		try {
+			currentStocksList = MarketService.getInstance().getStocks(symbols);
+			for (Stock stock : currentStocksList) {
+				update.add(new StockStatus(stock));
+			}
+			
+			datastoreService.saveToDataStore(update);
+			
+			//load fresh data from database.
+			portfolio = null;
+		} catch (SymbolNotFoundInNasdaq e) {
+			log.severe(e.getMessage());
+		}
+	}
+	
+	public PortfolioTotalStatus[] getPortfolioTotalStatus () throws BalanceException {
+		
+		portfolio portfolio = getPortfolio();
+		Map<Date, Float> map = new HashMap<>();
+		
+		//get stock status from db.
+		Stock[] stocks = portfolio.getStocks();
+		for (int i = 0; i < stocks.length; i++) {
+			Stock stock = stocks[i];
+			
+			if(stock != null) {
+				List<StockStatus> history = datastoreService.getStockHistory(stock.getSymbol(), DAYS_BACK);
+				
+				for (int j = 0; j < history.size(); j++) {
+					StockStatus curr = history.get(j);
+					Date date = dateMidnight(curr.getDate());
+					float value = curr.getBid()*curr.getStockQuantity();
+					
+					Float total = map.get(date);
+					if(total == null) {
+						total = value;
+					}else {
+						total += value;
+					}
+					
+					map.put(date, value);
+				}
+			}
+		}
+		
+		PortfolioTotalStatus[] ret = new PortfolioTotalStatus[map.size()];
+		
+		int index = 0;
+		//create dto objects
+		for (Date date : map.keySet()) {
+			ret[index] = new PortfolioTotalStatus(date, map.get(date));
+			index++;
+		}
+		
+		//sort by date ascending.
+		Arrays.sort(ret);
+		
+		return ret;
+	}
+	
+	public void setTitle(String title) throws BalanceException {
+		portfolio portfolio = getPortfolio();
+		portfolio.setTitle(title);
+		datastoreService.updatePortfolio(portfolio);
+		
+		flush();
+	}
+	
+	public void setBalance(float newBalance) throws BalanceException {
+		portfolio portfolio = getPortfolio();
+		portfolio.updateBalance(newBalance);
+		datastoreService.updatePortfolio(portfolio);
+		
+		flush();
+	}
+	
+	public void addStock(String symbol) throws StockAlreadyExistsException, PortfolioFullException, StockNotExistsException, SymbolNotFoundInNasdaq, BalanceException {
+		portfolio portfolio = getPortfolio();
+		
+		//get current symbol values from nasdaq.
+		Stock stock = MarketService.getInstance().getStock(symbol);
+		
+		
+		if(stock != null) {
+			
+			//first thing, add it to portfolio.
+			portfolio.addStock(stock);
+			
+			//second thing, save the new stock to the database.
+			datastoreService.saveStock(portfolio.findBySymbol(symbol));
+			
+			flush();
+		}
+	}
+	
+	public void buyStock(String symbol, int quantity) throws BalanceException, StockNotExistsException {
+		getPortfolio().buyStock(symbol, quantity);
+		flush();
+	}
 
-	public portfolio getPortfolio() throws StockAlreadyExistsException, PortfolioFullException, StockNotExistException{
-		portfolio myPortfolio = new portfolio();
+	public void sellStock(String symbol, int quantity) throws StockNotExistsException, IllegalQuantityException, PortfolioFullException, BalanceException {
+		getPortfolio().sellStock(symbol, quantity);
+		flush();
+	}
 
-		myPortfolio.setTitle("<b>Exercise 09 - Portfolio</b>");
-		myPortfolio.setBalance(10000);
-
-		Calendar cal = new GregorianCalendar(2014,11,15);
-		java.util.Date date = cal.getTime();	
-
-		Stock myFirstStock = new Stock("PIH", 10f, 8.5f, date);
-		Stock mySecondStock = new Stock("AAL", 30f, 25.5f, date);
-		Stock myThirdStock = new Stock("CAAS", 20f, 15.5f, date);
-		Stock my4Stock = new Stock("CAAS", 20f, 15.5f, date);
-
-		myPortfolio.addStock(myFirstStock);
-		myPortfolio.addStock(mySecondStock);
-		myPortfolio.addStock(myThirdStock);
-		myPortfolio.addStock(my4Stock);
-
-		myPortfolio.buyStock("PIH",20);
-		myPortfolio.buyStock("AAL",30);
-		myPortfolio.buyStock("CAAS",40);
-
-		myPortfolio.sellStock("AAL", -1);
-		myPortfolio.removeStock("CAAS");
-
-
-		return myPortfolio;
-
+	public void removeStock(String symbol) throws StockNotExistsException, IllegalQuantityException, PortfolioFullException, BalanceException {
+		getPortfolio().removeStock(symbol);
+		flush();
+	}
+	
+	private void flush() throws BalanceException {
+		//update db
+		datastoreService.updatePortfolio(getPortfolio());
+		//now make next call to portfolio to fetch data from updated db.
+		portfolio = null;
+	}
+	
+	/**
+	 * Transform a given date to start day date.
+	 * @param date
+	 * @return
+	 */
+	private Date dateMidnight(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		
+		return cal.getTime();
 	}
 }
-
-

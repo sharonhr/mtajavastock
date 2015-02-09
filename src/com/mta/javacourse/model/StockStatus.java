@@ -32,6 +32,13 @@ public class StockStatus extends Stock{
 		setRecommendation(stockStatus.recommendation);
 		setStockQuantity(stockStatus.stockQuantity);
 	}
+	
+	
+	public StockStatus(Stock stock) {
+		super(stock);
+	}
+	
+	
 	/**
 	 * copy c'tor
 	 * @param Symbol

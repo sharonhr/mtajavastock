@@ -1,58 +1,57 @@
 package com.mta.javacourse.servlet;
 
-import java.io.IOException;
+import com.mta.javacourse.dto.PortfolioDto;
+import com.mta.javacourse.dto.PortfolioTotalStatus;
+import com.mta.javacourse.model.StockStatus;
 
-import javax.servlet.http.HttpServlet;
+import exception.BalanceException;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.tools.ant.taskdefs.Sync.MyCopy;
+public class PortfolioServlet extends AbstractAlgoServlet {
 
-import com.mta.javacourse.model.Stock;
-import com.mta.javacourse.model.portfolio;
-import com.mta.javacourse.service.PortfolioService;
+	private static final long serialVersionUID = 1L;
 
-import exception.BalanceException;
-import exception.PortfolioFullException;
-import exception.StockAlreadyExistsException;
-import exception.StockNotExistException;
-
-@SuppressWarnings("serial")
-
-/**
- * this class shows portfolio as html
- * @author sharon
- *
- */
-public class PortfolioServlet extends HttpServlet {
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) 
-			throws IOException { 
-		resp.setContentType("text/html");
-		try {
-			PortfolioService portfolioService = new PortfolioService();
-			portfolio portfolio = portfolioService.getPortfolio();
-			resp.getWriter().println(portfolio.getHtmlString());
-			Stock[] stocksStatus = portfolio.getStocksStatus();
-			
-		} catch(Exception e) {
-			resp.getWriter().println(e.getMessage());
-		}
-			/*}catch(PortfolioFullException e) {
-			resp.getWriter().println("Portfolio is full!");
-		} catch(StockAlreadyExistsException e) {
-			resp.getWriter().println("The stock already exists!");
-	//	} catch (BalanceException e) {
-		//	resp.getWriter().println("Not enough balance!");
-		} catch (StockNotExistException e) {
-			resp.getWriter().println("The stock does not exist!");
-		*/
-	}	
-		/*PortfolioService portfolioService = new PortfolioService();
-		portfolio portfolio = portfolioService.getPortfolio();
-		Stock[] stocksStatus = portfolio.getStocksStatus();
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
-		resp.setContentType("Text/html");
-		resp.getWriter().println(portfolio.getHtmlString());*/
-
+		resp.setContentType("application/json");
+		
+		PortfolioTotalStatus[] totalStatus = null;
+		try {
+			totalStatus = portfolioService.getPortfolioTotalStatus();
+		} catch (BalanceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		StockStatus[] stockStatusArray = null;
+		try {
+			stockStatusArray = portfolioService.getPortfolio().getStocks();
+		} catch (BalanceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		List<StockStatus> stockStatusList = new ArrayList<>();
+		for (StockStatus ss : stockStatusArray) {
+			if(ss != null)
+				stockStatusList.add(ss);
+		}
+		
+		PortfolioDto pDto = new PortfolioDto();
+		try {
+			pDto.setTitle(portfolioService.getPortfolio().getTitle());
+		} catch (BalanceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		pDto.setTotalStatus(totalStatus);
+		pDto.setStockTable(stockStatusList);
+		resp.getWriter().print(withNullObjects().toJson(pDto));
 	}
-
+}
